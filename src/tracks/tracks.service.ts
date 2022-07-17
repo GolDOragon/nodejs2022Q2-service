@@ -8,8 +8,8 @@ import { TracksRepository } from './tracks.repository';
 export class TracksService {
   constructor(private readonly tracksRepository: TracksRepository) {}
 
-  async create(createTrackDto: CreateTrackDto) {
-    const track = await this.tracksRepository.create(createTrackDto);
+  async create(dto: CreateTrackDto) {
+    const track = await this.tracksRepository.create(dto);
 
     return track;
   }

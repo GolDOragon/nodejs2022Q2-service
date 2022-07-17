@@ -8,8 +8,8 @@ export class RootRepository<
 > {
   private readonly entities: TEntity[] = [];
 
-  constructor(defaultItems: TEntity[]) {
-    this.entities = defaultItems;
+  constructor(defaultItems?: TEntity[]) {
+    this.entities = defaultItems || [];
   }
 
   async create(dto: TCreateDTO) {
@@ -28,7 +28,13 @@ export class RootRepository<
   }
 
   async findOne(requiredId: string) {
-    return this.entities.find(({ id }) => id === requiredId) ?? null;
+    const entity = this.entities.find(({ id }) => id === requiredId);
+
+    if (!entity) {
+      return null;
+    }
+
+    return entity;
   }
 
   async update(id: string, newFields: TUpdateDTO) {
