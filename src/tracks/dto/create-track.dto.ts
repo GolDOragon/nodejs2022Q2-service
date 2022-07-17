@@ -1,5 +1,4 @@
-import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateTrackDto {
   @IsString()
@@ -7,17 +6,12 @@ export class CreateTrackDto {
   name: string;
 
   @IsString()
-  @ValidateIf((_, value) => value !== null)
-  @IsNotEmpty()
   artistId: string | null;
 
   @IsString()
-  @ValidateIf((_, value) => value !== null)
-  @IsNotEmpty()
   albumId: string | null;
 
   @IsNumber()
   @IsNotEmpty()
-  @Expose()
   duration: number;
 }

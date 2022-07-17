@@ -4,12 +4,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TracksModule } from './tracks/tracks.module';
 import { ArtistsModule } from './artists/artists.module';
+import { AlbumsModule } from './albums/albums.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TracksModule,
     ArtistsModule,
+    AlbumsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
