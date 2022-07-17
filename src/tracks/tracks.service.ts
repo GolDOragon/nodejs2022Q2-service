@@ -1,6 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { TrackNotFoundError } from './track.error';
 import { TracksRepository } from './tracks.repository';
 
 @Injectable()
@@ -23,7 +24,7 @@ export class TracksService {
     const track = await this.tracksRepository.findOne(id);
 
     if (!track) {
-      throw new HttpException('Track not found', HttpStatus.NOT_FOUND);
+      throw new TrackNotFoundError();
     }
 
     return track;
@@ -33,7 +34,7 @@ export class TracksService {
     const track = await this.tracksRepository.update(id, dto);
 
     if (!track) {
-      throw new HttpException('Track not found', HttpStatus.NOT_FOUND);
+      throw new TrackNotFoundError();
     }
 
     return track;
@@ -43,7 +44,7 @@ export class TracksService {
     const track = await this.tracksRepository.remove(id);
 
     if (!track) {
-      throw new HttpException('Track not found', HttpStatus.NOT_FOUND);
+      throw new TrackNotFoundError();
     }
 
     return track;
