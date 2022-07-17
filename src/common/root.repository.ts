@@ -37,6 +37,14 @@ export class RootRepository<
     return entity;
   }
 
+  async findOneBy(fields: Partial<TEntity>) {
+    const entity = this.entities.find((entity) =>
+      Object.entries(fields).every(([key, value]) => entity[key] === value),
+    );
+
+    return entity;
+  }
+
   async update(id: string, newFields: TUpdateDTO) {
     const index = this.entities.findIndex((track) => track.id === id);
 
