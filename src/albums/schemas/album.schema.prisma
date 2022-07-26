@@ -1,0 +1,7 @@
+model Album {
+  id     String   @id @default(uuid())
+  name   String
+  year   Int
+  artist Artist @relation(fields:[artistId], references: [id])
+  artistId String
+}

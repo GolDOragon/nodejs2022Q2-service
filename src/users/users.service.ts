@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { User } from './schemas/user.schema';
 import { UserInvalidPasswordError, UserNotFoundError } from './user.error';
 import { UsersRepository } from './users.repository';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
@@ -13,8 +13,8 @@ export class UsersService {
     const user = await this.usersRepository.create({
       ...createUserDto,
       version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     return this.toResponse(user);
@@ -49,7 +49,7 @@ export class UsersService {
     await this.usersRepository.update(id, {
       password: dto.newPassword,
       version: user.version + 1,
-      updatedAt: Date.now(),
+      // updatedAt: new Date(),
     });
 
     return this.findOne(id);
