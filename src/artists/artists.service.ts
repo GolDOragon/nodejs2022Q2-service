@@ -31,14 +31,14 @@ export class ArtistsService {
     return artist;
   }
 
-  async update(id: string, dto: UpdateArtistDto) {
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
     const artist = await this.artistRepository.findOneBy({ id });
 
     if (!artist) {
       throw new ArtistNotFoundError();
     }
 
-    return this.artistRepository.save({ ...artist, ...dto });
+    return this.artistRepository.save({ ...artist, ...updateArtistDto });
   }
 
   async remove(id: string) {
