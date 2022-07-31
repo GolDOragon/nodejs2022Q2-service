@@ -9,7 +9,7 @@ export class Artist extends Root {
   @Column()
   name: string;
 
-  @Column(() => Boolean)
+  @Column({ type: 'bool' })
   grammy: boolean;
 
   @OneToMany(() => Album, (album) => album.artist)

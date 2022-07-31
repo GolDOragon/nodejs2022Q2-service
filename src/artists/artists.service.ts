@@ -1,52 +1,59 @@
 import { Injectable } from '@nestjs/common';
 import { ArtistNotFoundError } from './artist.error';
-import { ArtistsRepository } from './artists.repository';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Artist } from './entities/Artist.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArtistsService {
-  constructor(private readonly artistsRepository: ArtistsRepository) {}
+  constructor(
+    @InjectRepository(Artist)
+    private readonly artistRepository: Repository<Artist>,
+  ) {}
 
   async create(createArtistDto: CreateArtistDto) {
-    const artist = await this.artistsRepository.create(createArtistDto);
-
-    return artist;
+    return this.artistRepository.save(createArtistDto).then(this.toResponse);
   }
 
   async findAll() {
-    const artists = this.artistsRepository.findAll();
-
-    return artists;
+    return this.artistRepository
+      .find()
+      .then((artists) => artists.map(this.toResponse));
   }
 
   async findOne(id: string) {
-    const artist = await this.artistsRepository.findOne(id);
+    const artist = await this.artistRepository.findOneBy({ id });
 
     if (!artist) {
       throw new ArtistNotFoundError();
     }
 
-    return artist;
+    return this.toResponse(artist);
   }
 
   async update(id: string, dto: UpdateArtistDto) {
-    const artist = await this.artistsRepository.update(id, dto);
+    const artist = await this.artistRepository.findOneBy({ id });
 
     if (!artist) {
+      throw new ArtistNotFoundError();
+    }
+
+    return this.artistRepository.save({ ...artist, ...dto });
+  }
+
+  async remove(id: string) {
+    const artist = await this.artistRepository.delete(id);
+
+    if (!artist.affected) {
       throw new ArtistNotFoundError();
     }
 
     return artist;
   }
 
-  async remove(id: string) {
-    const artist = await this.artistsRepository.remove(id);
-
-    if (!artist) {
-      throw new ArtistNotFoundError();
-    }
-
+  private toResponse({ createdAt, updatedAt, ...artist }: Artist) {
     return artist;
   }
 }
