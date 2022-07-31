@@ -1,27 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { AlbumNotFoundError } from './album.error';
-import { AlbumsRepository } from './albums.repository';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from './entities/Album.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AlbumsService {
-  constructor(private readonly albumsRepository: AlbumsRepository) {}
+  constructor(
+    @InjectRepository(Album)
+    private readonly albumRepository: Repository<Album>,
+  ) {}
 
   async create(createAlbumDto: CreateAlbumDto) {
-    const album = await this.albumsRepository.create(createAlbumDto);
-
-    return album;
+    return this.albumRepository.save(createAlbumDto);
   }
 
   async findAll() {
-    const albums = await this.albumsRepository.findAll();
-
-    return albums;
+    return this.albumRepository.find();
   }
 
   async findOne(id: string) {
-    const album = await this.albumsRepository.findOne(id);
+    const album = await this.albumRepository.findOneBy({ id });
 
     if (!album) {
       throw new AlbumNotFoundError();
@@ -31,19 +32,19 @@ export class AlbumsService {
   }
 
   async update(id: string, dto: UpdateAlbumDto) {
-    const album = await this.albumsRepository.update(id, dto);
+    const album = await this.albumRepository.findOneBy({ id });
 
     if (!album) {
       throw new AlbumNotFoundError();
     }
 
-    return album;
+    return this.albumRepository.save({ ...album, ...dto });
   }
 
   async remove(id: string) {
-    const album = await this.albumsRepository.remove(id);
+    const album = await this.albumRepository.delete(id);
 
-    if (!album) {
+    if (!album.affected) {
       throw new AlbumNotFoundError();
     }
 

@@ -1,5 +1,12 @@
 import { Root } from '../../common/root';
-import { Column, Entity, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  RelationId,
+} from 'typeorm';
 import { Artist } from '../../artists/entities/Artist.entity';
 import { Track } from '../../tracks/entities/Track.entity';
 import { Favorite } from '../../favorites/entities/Favorite.entity';
@@ -11,6 +18,10 @@ export class Album extends Root {
 
   @Column({ type: 'int' })
   year: number;
+
+  @Column({ type: 'uuid', nullable: true })
+  @RelationId((album: Album) => album.artist)
+  artistId: string | null;
 
   @ManyToOne(() => Artist, (artist) => artist.albums, { nullable: true })
   artist: Artist | null;
