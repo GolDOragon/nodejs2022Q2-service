@@ -1,8 +1,14 @@
-import { Column, Entity } from 'typeorm';
+import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 import { Root } from '../../common/root';
 
 @Entity()
 export class User extends Root {
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
+
   @Column()
   login: string;
 

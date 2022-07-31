@@ -14,13 +14,11 @@ export class ArtistsService {
   ) {}
 
   async create(createArtistDto: CreateArtistDto) {
-    return this.artistRepository.save(createArtistDto).then(this.toResponse);
+    return this.artistRepository.save(createArtistDto);
   }
 
   async findAll() {
-    return this.artistRepository
-      .find()
-      .then((artists) => artists.map(this.toResponse));
+    return this.artistRepository.find();
   }
 
   async findOne(id: string) {
@@ -30,7 +28,7 @@ export class ArtistsService {
       throw new ArtistNotFoundError();
     }
 
-    return this.toResponse(artist);
+    return artist;
   }
 
   async update(id: string, dto: UpdateArtistDto) {
@@ -50,10 +48,6 @@ export class ArtistsService {
       throw new ArtistNotFoundError();
     }
 
-    return artist;
-  }
-
-  private toResponse({ createdAt, updatedAt, ...artist }: Artist) {
     return artist;
   }
 }
