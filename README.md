@@ -16,15 +16,19 @@ git clone git@github.com:GolDOragon/nodejs2021Q4-service.git
 ```
 2. Create and fill `.env`
 > Now you can copy-past `.env.example`
-3. Run app
+3. Install dependencies
+```bash
+npm ci
+```
+4. Run app
 ```bash
 npm run start:dev 
 ```
-4. Setup database structure
+5. Setup database structure
 ```bash
 npm run migration:run 
 ```
-5. Ready for work
+6. Ready for work
 
 ## Migration guide
 1. Stop server
