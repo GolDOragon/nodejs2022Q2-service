@@ -10,9 +10,8 @@
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "dev:container": "nest start --watch",
-    "dev": "docker compose up --no-log-prefix",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "docker compose up --no-log-prefix",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -25,7 +24,8 @@
     "migration:generate": "npm run typeorm:cli -- -d ./ormConfig.ts migration:generate ./src/migrations/$npm_config_name",
     "migration:create": "npm run typeorm:cli -- migration:create ./src/migrations/$npm_config_name",
     "migration:run": "npm run typeorm:cli -- -d ./ormConfig.ts migration:run",
-    "migration:revert": "npm run typeorm:cli -- -d ./ormConfig.ts migration:revert"
+    "migration:revert": "npm run typeorm:cli -- -d ./ormConfig.ts migration:revert",
+    "docker:scan": "docker scan rest-api-service_backend"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
