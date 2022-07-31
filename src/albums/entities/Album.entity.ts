@@ -2,6 +2,7 @@ import { Root } from '../../common/root';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -21,10 +22,14 @@ export class Album extends Root {
 
   @Column({ type: 'uuid', nullable: true })
   @RelationId((album: Album) => album.artist)
-  artistId: string | null;
+  artistId?: string | null;
 
-  @ManyToOne(() => Artist, (artist) => artist.albums, { nullable: true })
-  artist: Artist | null;
+  @JoinColumn()
+  @ManyToOne(() => Artist, (artist) => artist.albums, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  artist?: Artist | null;
 
   @OneToMany(() => Track, (track) => track.album)
   tracks: Track[];

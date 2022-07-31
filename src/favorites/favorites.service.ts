@@ -5,19 +5,19 @@ import { TracksService } from 'src/tracks/tracks.service';
 import {
   EntityAlreadyInFavoritesError,
   EntityNotInFavoritesError,
+  UnprocessableEntityError,
 } from './favorite.error';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Favorite } from './entities/Favorite.entity';
 import { Repository } from 'typeorm';
-import { FavoritesRepository } from './favorites.repository';
+
+type EntityNames = 'Artist' | 'Album' | 'Track';
 
 @Injectable()
 export class FavoritesService {
   constructor(
     @InjectRepository(Favorite)
     private readonly favoriteRepository: Repository<Favorite>,
-
-    private readonly favoriteRepository1: FavoritesRepository,
 
     private readonly artistsService: ArtistsService,
 
@@ -27,13 +27,7 @@ export class FavoritesService {
   ) {}
 
   async findAll() {
-    const favorites = await this.favoriteRepository.find({
-      relations: {
-        artist: true,
-        album: true,
-        track: true,
-      },
-    });
+    const favorites = await this.favoriteRepository.find();
 
     return favorites.reduce(
       (acc, item) => {
@@ -65,8 +59,8 @@ export class FavoritesService {
   }
 
   async addArtist(artistId: string) {
-    await this.artistsService.findOne(artistId);
-    await this.checkEntityInFavorites('Artist', { artistId });
+    await this.isEntityExist(artistId, this.artistsService, 'Artist');
+    await this.isEntityInFavorites('Artist', { artistId });
 
     return this.favoriteRepository.save({ artistId });
   }
@@ -82,8 +76,8 @@ export class FavoritesService {
   }
 
   async addTrack(trackId: string) {
-    await this.tracksService.findOne(trackId);
-    await this.checkEntityInFavorites('Track', { trackId });
+    await this.isEntityExist(trackId, this.tracksService, 'Track');
+    await this.isEntityInFavorites('Track', { trackId });
 
     return this.favoriteRepository.save({ trackId });
   }
@@ -99,8 +93,8 @@ export class FavoritesService {
   }
 
   async addAlbum(albumId: string) {
-    await this.albumsService.findOne(albumId);
-    await this.checkEntityInFavorites('Album', { albumId });
+    await this.isEntityExist(albumId, this.albumsService, 'Album');
+    await this.isEntityInFavorites('Album', { albumId });
 
     return this.favoriteRepository.save({ albumId });
   }
@@ -115,8 +109,20 @@ export class FavoritesService {
     return favorite;
   }
 
-  private async checkEntityInFavorites(
-    name: 'Artist' | 'Album' | 'Track',
+  private async isEntityExist(
+    id: string,
+    service: ArtistsService | AlbumsService | TracksService,
+    name: EntityNames,
+  ) {
+    try {
+      await service.findOne(id);
+    } catch {
+      throw new UnprocessableEntityError(name);
+    }
+  }
+
+  private async isEntityInFavorites(
+    name: EntityNames,
     criteria: Pick<Favorite, 'artistId' | 'albumId' | 'trackId'>,
   ) {
     const isEntityInFavorites = await this.favoriteRepository

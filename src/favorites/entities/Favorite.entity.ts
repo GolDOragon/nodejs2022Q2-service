@@ -12,7 +12,11 @@ export class Favorite extends Root {
   artistId?: string | null;
 
   @JoinColumn()
-  @OneToOne(() => Artist, (artist) => artist.favorite, { nullable: true })
+  @OneToOne(() => Artist, (artist) => artist.favorite, {
+    nullable: true,
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   artist?: Artist | null;
 
   @Column({ type: 'uuid', nullable: true })
@@ -20,7 +24,11 @@ export class Favorite extends Root {
   albumId?: string | null;
 
   @JoinColumn()
-  @OneToOne(() => Album, (album) => album.favorite, { nullable: true })
+  @OneToOne(() => Album, (album) => album.favorite, {
+    nullable: true,
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   album?: Album | null;
 
   @Column({ type: 'uuid', nullable: true })
@@ -28,6 +36,10 @@ export class Favorite extends Root {
   trackId?: string | null;
 
   @JoinColumn()
-  @OneToOne(() => Track, (track) => track.favorite, { nullable: true })
+  @OneToOne(() => Track, (track) => track.favorite, {
+    nullable: true,
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   track?: Track | null;
 }

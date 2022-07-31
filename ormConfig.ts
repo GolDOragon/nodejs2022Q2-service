@@ -1,12 +1,8 @@
 import { ConfigModule, registerAs } from '@nestjs/config';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { DataSource } from 'typeorm';
-import { User } from './src/users/entities/User.entity';
-import { Artist } from './src/artists/entities/Artist.entity';
-import { Album } from './src/albums/entities/Album.entity';
-import { Track } from './src/tracks/entities/Track.entity';
-import { Favorite } from './src/favorites/entities/Favorite.entity';
 import { migrations } from './src/migrations';
+import { entities } from './src/database/entities';
 
 export const ormConfig = registerAs('ormconfig', () => {
   const options: PostgresConnectionOptions = {
@@ -29,6 +25,6 @@ ConfigModule.forRoot({
 
 export default new DataSource({
   ...ormConfig(),
-  entities: [User, Artist, Album, Track, Favorite],
+  entities,
   migrations,
 });

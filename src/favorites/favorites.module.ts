@@ -6,7 +6,6 @@ import { TracksModule } from 'src/tracks/tracks.module';
 import { AlbumsModule } from 'src/albums/albums.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Favorite } from './entities/Favorite.entity';
-import { FavoritesRepository } from './favorites.repository';
 
 @Module({
   imports: [
@@ -17,6 +16,6 @@ import { FavoritesRepository } from './favorites.repository';
     AlbumsModule,
   ],
   controllers: [FavoritesController],
-  providers: [FavoritesService, FavoritesRepository],
+  providers: [FavoritesService],
 })
 export class FavoritesModule {}

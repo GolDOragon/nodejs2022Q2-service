@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  RelationId,
+} from 'typeorm';
 import { Root } from '../../common/root';
 import { Artist } from '../../artists/entities/Artist.entity';
 import { Album } from '../../albums/entities/Album.entity';
@@ -12,12 +19,29 @@ export class Track extends Root {
   @Column({ type: 'int' })
   duration: number;
 
-  @OneToMany(() => Artist, (artist) => artist.tracks)
-  artist: Artist;
+  @Column({ type: 'uuid', nullable: true })
+  @RelationId((track: Track) => track.artist)
+  artistId?: string;
 
-  @OneToMany(() => Album, (album) => album.tracks)
-  album: Album;
+  @JoinColumn()
+  @ManyToOne(() => Artist, (artist) => artist.tracks, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  artist?: Artist;
 
+  @Column({ type: 'uuid', nullable: true })
+  @RelationId((track: Track) => track.album)
+  albumId?: string | null;
+
+  @JoinColumn()
+  @ManyToOne(() => Album, (album) => album.tracks, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  album?: Album;
+
+  @JoinColumn()
   @OneToOne(() => Favorite, (favorite) => favorite.artist)
-  favorite: Favorite;
+  favorite?: Favorite;
 }
