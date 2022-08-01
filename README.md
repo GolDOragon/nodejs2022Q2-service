@@ -12,7 +12,7 @@ Rolling Scope School course task implementation. In the service `Users` can crea
 
 1. Clone the repository
 ```
-git clone git@github.com:GolDOragon/nodejs2021Q4-service.git
+git clone git@github.com:GolDOragon/nodejs2022Q2-service.git
 ```
 2. Create and fill `.env`
 > Now you can copy-past `.env.example`
