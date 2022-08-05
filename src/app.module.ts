@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TracksModule } from './tracks/tracks.module';
@@ -9,6 +9,7 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { ormConfig } from '../ormConfig';
+import { LoggingMiddleware } from './logging/loggingMiddleware';
 
 @Module({
   imports: [
@@ -27,4 +28,8 @@ import { ormConfig } from '../ormConfig';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+  }
+}
