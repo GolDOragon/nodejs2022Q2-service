@@ -20,7 +20,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       new RecordService(
         path.resolve(__dirname, '..', '..', '..', 'logs'),
         'exception',
-        +process.env.LOG_FILE_SIZE || 10240,
+        parseInt(process.env.LOG_FILE_SIZE, 10) || 10240,
       ),
     );
   }
