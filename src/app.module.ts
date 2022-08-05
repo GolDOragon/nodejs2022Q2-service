@@ -9,7 +9,8 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { ormConfig } from '../ormConfig';
-import { LoggingMiddleware } from './logging/loggingMiddleware';
+import { LoggingMiddleware } from './logging/logging.middleware';
+import { LoggingService } from './logging/logging.service';
 
 @Module({
   imports: [
@@ -25,8 +26,9 @@ import { LoggingMiddleware } from './logging/loggingMiddleware';
     UsersModule,
     FavoritesModule,
   ],
+  exports: [LoggingService],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, LoggingService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
