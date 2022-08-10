@@ -9,8 +9,9 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "dev:container": "nest start --watch",
     "start": "nest start",
-    "start:dev": "nest start --watch",
+    "start:dev": "docker compose up --no-log-prefix",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
@@ -18,7 +19,13 @@
     "test:auth": "cross-env TEST_MODE=auth jest --config ./test/jest-e2e.json",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "typeorm:cli": "docker exec -it rest-api-service npx ts-node ./node_modules/typeorm/cli",
+    "migration:generate": "npm run typeorm:cli -- -d ./ormConfig.ts migration:generate ./src/migrations/$npm_config_name",
+    "migration:create": "npm run typeorm:cli -- migration:create ./src/migrations/$npm_config_name",
+    "migration:run": "npm run typeorm:cli -- -d ./ormConfig.ts migration:run",
+    "migration:revert": "npm run typeorm:cli -- -d ./ormConfig.ts migration:revert",
+    "docker:scan": "docker scan rest-api-service_backend"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -27,14 +34,17 @@
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/mapped-types": "^1.0.1",
     "@nestjs/platform-express": "^8.0.0",
+    "@nestjs/typeorm": "^9.0.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "dotenv": "^16.0.1",
     "http-status-codes": "^2.2.0",
+    "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
+    "typeorm": "^0.3.7",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

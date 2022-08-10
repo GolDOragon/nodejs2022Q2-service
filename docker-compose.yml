@@ -1,0 +1,41 @@
+services:
+  backend:
+    container_name: rest-api-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: npm run dev:container
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - '${PORT}:${PORT}'
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - postgres
+
+  db:
+    container_name: postgres
+    build:
+      dockerfile: ./Dockerfile.db
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  dbdata:

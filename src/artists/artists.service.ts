@@ -1,27 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { ArtistNotFoundError } from './artist.error';
-import { ArtistsRepository } from './artists.repository';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Artist } from './entities/Artist.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ArtistsService {
-  constructor(private readonly artistsRepository: ArtistsRepository) {}
+  constructor(
+    @InjectRepository(Artist)
+    private readonly artistRepository: Repository<Artist>,
+  ) {}
 
   async create(createArtistDto: CreateArtistDto) {
-    const artist = await this.artistsRepository.create(createArtistDto);
-
-    return artist;
+    return this.artistRepository.save(createArtistDto);
   }
 
   async findAll() {
-    const artists = this.artistsRepository.findAll();
-
-    return artists;
+    return this.artistRepository.find();
   }
 
   async findOne(id: string) {
-    const artist = await this.artistsRepository.findOne(id);
+    const artist = await this.artistRepository.findOneBy({ id });
 
     if (!artist) {
       throw new ArtistNotFoundError();
@@ -30,20 +31,20 @@ export class ArtistsService {
     return artist;
   }
 
-  async update(id: string, dto: UpdateArtistDto) {
-    const artist = await this.artistsRepository.update(id, dto);
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    const artist = await this.artistRepository.findOneBy({ id });
 
     if (!artist) {
       throw new ArtistNotFoundError();
     }
 
-    return artist;
+    return this.artistRepository.save({ ...artist, ...updateArtistDto });
   }
 
   async remove(id: string) {
-    const artist = await this.artistsRepository.remove(id);
+    const artist = await this.artistRepository.delete(id);
 
-    if (!artist) {
+    if (!artist.affected) {
       throw new ArtistNotFoundError();
     }
 

@@ -1,33 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { User } from './schemas/user.schema';
 import { UserInvalidPasswordError, UserNotFoundError } from './user.error';
-import { UsersRepository } from './users.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/User.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.usersRepository.create({
-      ...createUserDto,
-      version: 1,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    });
+    const user = await this.userRepository.save(createUserDto);
 
     return this.toResponse(user);
   }
 
   async findAll() {
-    const users = await this.usersRepository.findAll();
+    const users = await this.userRepository.find();
 
     return users.map(this.toResponse);
   }
 
   async findOne(id: string) {
-    const user = await this.usersRepository.findOne(id);
+    const user = await this.userRepository.findOneBy({ id });
 
     if (!user) {
       throw new UserNotFoundError();
@@ -37,7 +36,7 @@ export class UsersService {
   }
 
   async update(id: string, dto: UpdatePasswordDto) {
-    const user = await this.usersRepository.findOne(id);
+    const user = await this.userRepository.findOneBy({ id });
 
     if (!user) {
       throw new UserNotFoundError();
@@ -46,26 +45,26 @@ export class UsersService {
       throw new UserInvalidPasswordError();
     }
 
-    await this.usersRepository.update(id, {
-      password: dto.newPassword,
-      version: user.version + 1,
-      updatedAt: Date.now(),
-    });
-
-    return this.findOne(id);
+    return this.userRepository
+      .save({ ...user, password: dto.newPassword, version: user.version + 1 })
+      .then(this.toResponse);
   }
 
   async remove(id: string) {
-    const user = await this.usersRepository.remove(id);
+    const user = await this.userRepository.delete(id);
 
-    if (!user) {
+    if (!user.affected) {
       throw new UserNotFoundError();
     }
 
     return user;
   }
 
-  private toResponse({ password, ...user }: User) {
-    return user;
+  private toResponse({ password, createdAt, updatedAt, ...user }: User) {
+    return {
+      ...user,
+      createdAt: createdAt.getTime(),
+      updatedAt: updatedAt.getTime(),
+    };
   }
 }
